@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Basic Server</title>
+</head>
+
+<body>
+    <form>
+        <input type="text" placeholder="Enter your name..." id="name" />
+        <!--<input type="text-area" aria-colspan="5" aria-rowspan="5"/>
+        -->
+        <!-- <input type="text" placeholder="Enter your email..."/> -->
+
+        <input type="submit" value="Submit" id="submit"/>
+    </form>
+
+    <h3 id="message">Hello Guest</h3>
+    <p id="error">gelo</p>
+
+    <script>
+        const name = document.getElementById('name');
+        const message = document.getElementById('message');
+        const submit = document.getElementById('submit');
+        const error = document.getElementById('error');
+
+        const onSubmit = async (e) => {
+            try {
+                e.preventDefault();
+                const data = { name: name.value };
+                const response = await fetch('http://localhost:3000/submit', {
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                console.log(result);
+                message.textContent = result.message;
+            } catch (error) {
+                console.error('Error:', error);
+                error.textContent = error.message;
+            }
+        }
+
+        submit.addEventListener('click', onSubmit);
+    </script>
+</body>
+
+</html>
