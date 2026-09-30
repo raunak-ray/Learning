@@ -1,4 +1,3 @@
-import express from "express";
 import dotenv from "dotenv";
 import connectToDb from "./database/config.js";
 import {createTables} from "./database/schema.js";
