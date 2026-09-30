@@ -6,7 +6,7 @@ const host = process.env.POSTGRES_HOST || "localhost";
 const port = process.env.POSTGRES_PORT || 5432;
 const database = process.env.POSTGRES_DB || "task_management";
 
-const pool = new pg.Pool({
+export const pool = new pg.Pool({
     user,
     password,
     host,
