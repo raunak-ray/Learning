@@ -2,12 +2,11 @@ import express from "express";
 import dotenv from "dotenv";
 import connectToDb from "./database/config.js";
 import {createTables} from "./database/schema.js";
+import app from "./app.js";
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
-
-const app = express();
 
 async function startServer() {
     await connectToDb();
