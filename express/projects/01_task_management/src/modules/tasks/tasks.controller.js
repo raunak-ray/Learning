@@ -1,7 +1,8 @@
 import * as tasksService from "./tasks.service.js";
 
 export const getTasks = async (req, res) => {
-    const data = await tasksService.fetchTasks();
+    const {limit = 20, page = 1} = req.query;
+    const data = await tasksService.fetchTasks(parseInt(limit), parseInt(page));
     return res.json({
         message: "Tasks route",
         data

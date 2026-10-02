@@ -1,10 +1,27 @@
 import {pool} from "../../database/config.js";
 import { TASK_QUERY } from "./constant.js";
 
-export const fetchTasks = async () => {
-    const result = await pool.query(TASK_QUERY.getAll);
+export const fetchTasks = async (limit, page) => {
+    const offset = (page - 1) * limit;
+    
+    const [result, count] = await Promise.all([
+        pool.query(TASK_QUERY.getAll, [limit, offset]),
+        pool.query("SELECT COUNT(*) FROM tasks")
+    ])
 
-    return result.rows;
+    const total = parseInt(count.rows[0].count, 10);
+    const totalPages = Math.ceil(total / limit);
+
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return {
+        tasks: result.rows,
+        total,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage
+    };
 }
 
 export const createTask = async (title, description = null) => {

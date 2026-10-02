@@ -12,7 +12,8 @@ export const TASK_QUERY = {
     `,
 
     getAll: `
-        SELECT * FROM tasks;
+        SELECT * FROM tasks
+        LIMIT $1 OFFSET $2;
     `,
 
     getById: `
