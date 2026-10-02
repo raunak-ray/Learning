@@ -24,6 +24,20 @@ export const fetchTasks = async (limit, page) => {
     };
 }
 
+export const fetchTasksByCursor = async (cursor, limit) => {
+    const result = await pool.query(TASK_QUERY.getAllByCursor, [cursor, limit + 1]);
+
+    const tasks = result.rows.slice(0, limit);
+    const nextCursor = tasks.length > 0 ? tasks[limit - 1] : null;
+    const hasMore = nextCursor !== null;
+
+    return {
+        tasks,
+        nextCursor: nextCursor ? nextCursor.id : null,
+        hasMore
+    }
+}
+
 export const createTask = async (title, description = null) => {
     const result = await pool.query(TASK_QUERY.create, [title, description]);
 

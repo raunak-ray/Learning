@@ -16,6 +16,13 @@ export const TASK_QUERY = {
         LIMIT $1 OFFSET $2;
     `,
 
+    getAllByCursor: `
+        SELECT * FROM tasks
+        WHERE id > $1
+        ORDER BY id ASC
+        LIMIT $2;
+    `,
+
     getById: `
         SELECT * FROM tasks
         WHERE id = $1;

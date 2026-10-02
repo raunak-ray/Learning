@@ -1,13 +1,36 @@
 import * as tasksService from "./tasks.service.js";
 
 export const getTasks = async (req, res) => {
-    const {limit = 20, page = 1} = req.query;
-    const data = await tasksService.fetchTasks(parseInt(limit), parseInt(page));
+    const {
+        limit = 20,
+        page = 1,
+        cursor = 0
+    } = req.query;
+
+    const useCursor = req.query.useCursor === "true";
+
+    if (useCursor) {
+        const data = await tasksService.fetchTasksByCursor(
+            parseInt(cursor),
+            parseInt(limit)
+        );
+
+        return res.json({
+            message: "Tasks fetched successfully using cursor",
+            data
+        });
+    }
+
+    const data = await tasksService.fetchTasks(
+        parseInt(limit),
+        parseInt(page)
+    );
+
     return res.json({
-        message: "Tasks route",
+        message: "Tasks fetched successfully using offset",
         data
     });
-}
+};
 
 export const getTaskById = async (req, res) => {
     const id = parseInt(req.params.id);
