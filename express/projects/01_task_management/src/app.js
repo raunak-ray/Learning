@@ -1,6 +1,6 @@
 import express from "express";
 import tasksRouter from "./modules/tasks/tasks.route.js";
-import { loggingMiddleware } from "./middleware/logging.middleware.js";
+import { errorMiddleware, loggingMiddleware } from "./middleware/index.js";
 
 const app = express();
 
@@ -14,5 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/tasks", tasksRouter);
+
+app.use(errorMiddleware);
 
 export default app;
