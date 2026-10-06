@@ -23,4 +23,4 @@ async function seedData(start, end) {
     }
 }
 
-seedData(50001, 100000);
+// seedData(50001, 100000);

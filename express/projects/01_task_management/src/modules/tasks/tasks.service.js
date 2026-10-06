@@ -1,112 +1,121 @@
-import {pool} from "../../database/config.js";
-import { AppError, NotFoundError } from "../../utils/customError.js";
+import { pool } from "../../database/config.js";
+import { NotFoundError } from "../../utils/customError.js";
 import { TASK_QUERY } from "./constant.js";
 
 export const fetchTasks = async (page, limit) => {
-    const offset = (page - 1) * limit;
-    
-    const [result, count] = await Promise.all([
-        pool.query(TASK_QUERY.getAll, [limit, offset]),
-        pool.query("SELECT COUNT(*) FROM tasks")
-    ])
+  const offset = (page - 1) * limit;
 
-    const total = parseInt(count.rows[0].count, 10);
-    const totalPages = Math.ceil(total / limit);
+  const [result, count] = await Promise.all([
+    pool.query(TASK_QUERY.getAll, [limit, offset]),
+    pool.query("SELECT COUNT(*) FROM tasks"),
+  ]);
 
-    const hasNextPage = page < totalPages;
-    const hasPreviousPage = page > 1;
+  const total = parseInt(count.rows[0].count, 10);
+  const totalPages = Math.ceil(total / limit);
 
-    return {
-        tasks: result.rows,
-        total,
-        totalPages,
-        hasNextPage,
-        hasPreviousPage
-    };
-}
+  const hasNextPage = page < totalPages;
+  const hasPreviousPage = page > 1;
+
+  return {
+    tasks: result.rows,
+    total,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+  };
+};
 
 export const fetchTasksByCursor = async (cursor, limit) => {
-    const result = await pool.query(TASK_QUERY.getAllByCursor, [cursor, limit + 1]);
+  const result = await pool.query(TASK_QUERY.getAllByCursor, [
+    cursor,
+    limit + 1,
+  ]);
 
-    const tasks = result.rows.slice(0, limit);
-    const nextCursor = tasks.length > 0 ? tasks[limit - 1] : null;
-    const hasMore = nextCursor !== null;
+  const tasks = result.rows.slice(0, limit);
+  const nextCursor = tasks.length > 0 ? tasks[limit - 1] : null;
+  const hasMore = nextCursor !== null;
 
-    return {
-        tasks,
-        nextCursor: nextCursor ? nextCursor.id : null,
-        hasMore
-    }
-}
+  return {
+    tasks,
+    nextCursor: nextCursor ? nextCursor.id : null,
+    hasMore,
+  };
+};
 
 export const fetchTaskById = async (id) => {
-    const result = await pool.query(TASK_QUERY.getById, [id]);
+  const result = await pool.query(TASK_QUERY.getById, [id]);
 
-    if (!result.rows[0]) {
-        throw new NotFoundError("Task not found");
-    }
+  if (!result.rows[0]) {
+    throw new NotFoundError("Task not found");
+  }
 
-    return result.rows[0];
-}
+  return result.rows[0];
+};
 
 export const createTask = async (title, description = null) => {
-    const result = await pool.query(TASK_QUERY.create, [title, description]);
+  const result = await pool.query(TASK_QUERY.create, [title, description]);
 
-    return result.rows[0];
-}
+  return result.rows[0];
+};
 
 export const deleteTask = async (id) => {
-    const existing = await fetchTaskById(id);
+  const existing = await fetchTaskById(id);
 
-    if (!existing) {
-        throw new NotFoundError("Task not found");
-    }
+  if (!existing) {
+    throw new NotFoundError("Task not found");
+  }
 
-    const result = await pool.query(TASK_QUERY.deleteById, [id]);
+  const result = await pool.query(TASK_QUERY.deleteById, [id]);
 
-    return null;
-}
+  return null;
+};
 
-export const updateTask = async (id, title = null, description = null, status = null) => {
-    const fields = [];
-    const values = [];
+export const updateTask = async (
+  id,
+  title = null,
+  description = null,
+  status = null,
+) => {
+  const fields = [];
+  const values = [];
 
+  if (title) {
+    fields.push("title = $1");
+    values.push(title);
+  }
+
+  if (description) {
     if (title) {
-        fields.push("title = $1");
-        values.push(title);
+      fields.push("description = $2");
+    } else {
+      fields.push("description = $1");
     }
 
-    if (description) {
-        if (title) {
-            fields.push("description = $2");
-            
-        } else {
-            fields.push("description = $1");
-        }
+    values.push(description);
+  }
 
-        values.push(description);
+  if (status) {
+    if (title && description) {
+      fields.push("status = $3");
+    } else if (title || description) {
+      fields.push("status = $2");
+    } else {
+      fields.push("status = $1");
     }
 
-    if (status) {
-        if (title && description) {
-            fields.push("status = $3");
-            
-        } else if (title || description) {
-            fields.push("status = $2");
-        } else {
-            fields.push("status = $1");
-        }
+    values.push(status);
+  }
 
-        values.push(status);
-    }
+  const existing = await fetchTaskById(id);
 
-    const existing = await fetchTaskById(id);
+  if (!existing) {
+    throw new NotFoundError("Task not found");
+  }
 
-    if (!existing) {
-        throw new NotFoundError("Task not found");
-    }
+  const result = await pool.query(
+    TASK_QUERY.updateById(fields.join(", "), id),
+    values,
+  );
 
-    const result = await pool.query(TASK_QUERY.updateById(fields.join(", "), id), values);
-
-    return result.rows[0];
-}
+  return result.rows[0];
+};

@@ -1,4 +1,3 @@
-import { ValidationError } from "../../utils/customError.js";
 import { successResponse } from "../../utils/responseHelper.js";
 import * as tasksService from "./tasks.service.js";
 
