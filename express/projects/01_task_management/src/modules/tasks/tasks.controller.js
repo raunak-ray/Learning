@@ -1,4 +1,5 @@
 import { ValidationError } from "../../utils/customError.js";
+import { successResponse } from "../../utils/responseHelper.js";
 import * as tasksService from "./tasks.service.js";
 
 export const getTasks = async (req, res) => {
@@ -16,10 +17,7 @@ export const getTasks = async (req, res) => {
             parseInt(limit)
         );
 
-        return res.json({
-            message: "Tasks fetched successfully using cursor",
-            data
-        });
+        return successResponse(res, "Tasks fetched successfully using cursor", data);
     }
 
     const data = await tasksService.fetchTasks(
@@ -27,10 +25,7 @@ export const getTasks = async (req, res) => {
         parseInt(page)
     );
 
-    return res.json({
-        message: "Tasks fetched successfully using offset",
-        data
-    });
+    return successResponse(res, "Tasks fetched successfully using offset", data);
 };
 
 export const getTaskById = async (req, res) => {
@@ -38,10 +33,7 @@ export const getTaskById = async (req, res) => {
 
     const data = await tasksService.fetchTaskById(id);
 
-    return res.json({
-        message: `Task with id ${id}`,
-        data
-    });
+    return successResponse(res, "Task fetched successfully", data);
 }
 
 export const createTask = async (req, res) => {
@@ -61,10 +53,7 @@ export const createTask = async (req, res) => {
     }
 
     const data = await tasksService.createTask(title, description);
-    return res.json({
-        message: "Create task",
-        data
-    });
+    return successResponse(res, "Task created successfully", data, 201);
 }
 
 export const updateTask = async (req, res) => {
@@ -91,12 +80,9 @@ export const updateTask = async (req, res) => {
         throw new ValidationError("Validation failed", fieldsError);
     }
 
-    let data = await tasksService.updateTask(id, title, description, status);
+    const data = await tasksService.updateTask(id, title, description, status);
     
-    return res.json({
-        mesage: `Update task with id ${id}`,
-        data
-    });
+    return successResponse(res, "Task updated successfully", data);
 }
 
 export const deleteTask = async (req, res) => {
@@ -104,8 +90,5 @@ export const deleteTask = async (req, res) => {
 
     const data = await tasksService.deleteTask(id);
 
-    return res.json({
-        message: `Delete task with id ${id}`,
-        data
-    });
+    return successResponse(res, "Task deleted successfully", data);
 }
