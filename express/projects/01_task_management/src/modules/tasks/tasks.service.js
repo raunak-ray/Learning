@@ -2,7 +2,7 @@ import {pool} from "../../database/config.js";
 import { AppError, NotFoundError } from "../../utils/customError.js";
 import { TASK_QUERY } from "./constant.js";
 
-export const fetchTasks = async (limit, page) => {
+export const fetchTasks = async (page, limit) => {
     const offset = (page - 1) * limit;
     
     const [result, count] = await Promise.all([
