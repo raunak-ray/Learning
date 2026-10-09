@@ -79,3 +79,10 @@ export const deleteTaskSchema = z.object({
     .int("ID must be an integer")
     .positive("ID must be greater than 0"),
 });
+
+export type GetTaskById = z.infer<typeof getTaskSchema>;
+export type CreateTask = z.infer<typeof createTaskSchema>;
+export type UpdateTask = z.infer<typeof updateTaskSchema>;
+export type UpdateTaskParams = z.infer<typeof updateTaskParamsSchema>;
+export type DeleteTask = z.infer<typeof deleteTaskSchema>;
+export type GetTasks = z.infer<typeof getTasksSchema>;

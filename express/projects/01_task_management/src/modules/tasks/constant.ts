@@ -1,4 +1,5 @@
 export const TASK_STATUS = ["pending", "in-progress", "completed"];
+export type TaskStatus = typeof TASK_STATUS[number];
 
 export const TASK_QUERY = {
     create: `
@@ -9,6 +10,7 @@ export const TASK_QUERY = {
 
     getAll: `
         SELECT * FROM tasks
+        ORDER BY id ASC
         LIMIT $1 OFFSET $2;
     `,
 
@@ -24,7 +26,7 @@ export const TASK_QUERY = {
         WHERE id = $1;
     `,
 
-    updateById: (fields, id) => {
+    updateById: (fields: string, id: number) => {
         return `
             UPDATE tasks
             SET ${fields}, updated_at = NOW()

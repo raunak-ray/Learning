@@ -1,11 +1,21 @@
+export type Fields = {
+    field: string,
+    message: string
+}
+
 export class AppError extends Error {
-    constructor(message = "Something went wrong!", statusCode = 500, code = "INTERNAL_SERVER_ERROR", fields = undefined) {
+    statusCode: number;
+    code: string;
+    fields: Fields[] | undefined;
+    timestamp: string;
+
+    constructor(message = "Something went wrong!", statusCode = 500, code = "INTERNAL_SERVER_ERROR", fields: Fields[] | undefined = undefined) {
         super(message);
         this.statusCode = statusCode;
         this.code = code;
         this.fields = fields;
         this.timestamp = new Date().toLocaleString("en-US", {
-            timezone: "Asia/Kolkata",
+            timeZone: "Asia/Kolkata",
             dateStyle: "medium",
             timeStyle: "medium"
         })
@@ -31,7 +41,7 @@ export class NotFoundError extends AppError {
 }
 
 export class ValidationError extends AppError {
-    constructor(message = "Validation failed", fields = []) {
+    constructor(message = "Validation failed", fields: Fields[] | undefined = undefined) {
         super(message, 400, "VALIDATION_ERROR", fields);
     }
 }

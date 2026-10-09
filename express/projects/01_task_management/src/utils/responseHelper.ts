@@ -1,14 +1,15 @@
+import type { Response } from "express";
 import { AppError } from "./customError.js";
 import { getTimestamp } from "./helpers.js";
 
-export const successResponse = (res, message = "Success", data = {}, statusCode = 200) => {
+export const successResponse = (res: Response, message = "Success", data: unknown = {}, statusCode = 200) => {
     return res.status(statusCode).json({
         message,
         data
     });
 }
 
-export const errorResponse = (res, error) => {
+export const errorResponse = (res: Response, error: unknown) => {
     if (error instanceof AppError) {
         return res.status(error.statusCode).json({
             message: error.message,
@@ -18,10 +19,16 @@ export const errorResponse = (res, error) => {
         })
     }
 
-    const timestamp = getTimestamp();
+    const timestamp: string = getTimestamp();
+    let message: string;
+
+    if (error instanceof Error) {
+        message = error.message;
+    }
+    else message = "Something went wrong!";
 
     return res.status(500).json({
-        message: error.message || "Something went wrong",
+        message,
         timestamp,
         code: "INTERNAL_SERVER_ERROR",
     })

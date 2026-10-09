@@ -1,6 +1,6 @@
 import { pool } from "./config.js";
 
-async function seedData(start, end) {
+async function seedData(start: number, end: number): Promise<void> {
     try {
         const result = await pool.query(
             `

@@ -1,8 +1,9 @@
 import { pool } from "../../database/config.js";
 import { NotFoundError } from "../../utils/customError.js";
-import { TASK_QUERY } from "./constant.js";
+import { TASK_QUERY, type TaskStatus } from "./constant.js";
+import type { TasksResponse, TasksCursorResponse, Task } from "./tasks.types.js";
 
-export const fetchTasks = async (page, limit) => {
+export const fetchTasks = async (page: number, limit: number): Promise<TasksResponse> => {
   const offset = (page - 1) * limit;
 
   const [result, count] = await Promise.all([
@@ -25,7 +26,7 @@ export const fetchTasks = async (page, limit) => {
   };
 };
 
-export const fetchTasksByCursor = async (cursor, limit) => {
+export const fetchTasksByCursor = async (cursor: number, limit: number): Promise<TasksCursorResponse> => {
   const result = await pool.query(TASK_QUERY.getAllByCursor, [
     cursor,
     limit + 1,
@@ -42,7 +43,7 @@ export const fetchTasksByCursor = async (cursor, limit) => {
   };
 };
 
-export const fetchTaskById = async (id) => {
+export const fetchTaskById = async (id: number): Promise<Task | undefined> => {
   const result = await pool.query(TASK_QUERY.getById, [id]);
 
   if (!result.rows[0]) {
@@ -52,31 +53,31 @@ export const fetchTaskById = async (id) => {
   return result.rows[0];
 };
 
-export const createTask = async (title, description = null) => {
+export const createTask = async (title: string, description: string | null = null): Promise<Task> => {
   const result = await pool.query(TASK_QUERY.create, [title, description]);
 
   return result.rows[0];
 };
 
-export const deleteTask = async (id) => {
+export const deleteTask = async (id: number): Promise<null> => {
   const existing = await fetchTaskById(id);
 
   if (!existing) {
     throw new NotFoundError("Task not found");
   }
 
-  const result = await pool.query(TASK_QUERY.deleteById, [id]);
+  await pool.query(TASK_QUERY.deleteById, [id]);
 
   return null;
 };
 
 export const updateTask = async (
-  id,
-  title = null,
-  description = null,
-  status = null,
-) => {
-  const fields = [];
+  id: number,
+  title: string | null = null,
+  description: string | null = null,
+  status: TaskStatus | null = null,
+): Promise<Task | undefined> => {
+  const fields: string[] = [];
   const values = [];
 
   if (title) {
