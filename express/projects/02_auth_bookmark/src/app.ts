@@ -1,4 +1,5 @@
 import express from "express";
+import authRouter from "./modules/auth/auth.routes.js";
 
 const app = express();
 
@@ -9,5 +10,7 @@ app.get("/", (_, res) => {
     message: "Hello from server"
   });
 })
+
+app.use("/api/auth", authRouter);
 
 export default app;

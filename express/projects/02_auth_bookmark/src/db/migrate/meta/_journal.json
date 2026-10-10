@@ -8,6 +8,13 @@
       "when": 1791591095421,
       "tag": "01_create_user_table",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791652458041,
+      "tag": "02_update_user_table",
+      "breakpoints": true
     }
   ]
 }

@@ -9,6 +9,10 @@ export const User = pgTable("tbl_users", {
 
   lastName: varchar("last_name", { length: 50 }).notNull(),
 
+  email: varchar("email", { length: 255 }).notNull(),
+
+  password: varchar("password", {length: 255}).notNull(),
+
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
