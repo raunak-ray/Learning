@@ -1,13 +1,11 @@
 import bcrypt from "bcryptjs";
-import type { JwtPayload, JwtTokenType } from "./auth.types.js";
+import type { DecodedJwt, JwtPayload, JwtTokenType } from "./auth.types.js";
 import "dotenv/config";
 import jwt, { type SignOptions } from "jsonwebtoken";
 
 const SALT_ROUNDS = 10;
 
-export const hashPassword = async (
-  password: string,
-) => {
+export const hashPassword = async (password: string) => {
   return await bcrypt.hash(password, SALT_ROUNDS);
 };
 
@@ -58,4 +56,13 @@ export const generateTokenPair = (payload: JwtPayload) => {
     accessToken: generateAccessToken(payload),
     refreshToken: generateRefreshToken(payload),
   };
+};
+
+export const verifyToken = (
+  token: string,
+  type: JwtTokenType = "access",
+): DecodedJwt => {
+  const { secret } = getSecret(type);
+
+  return jwt.verify(token, secret) as unknown as DecodedJwt;
 };

@@ -1,4 +1,4 @@
-import { ConflictError, UnauthorizedError } from "../../utils/AppError.js";
+import { ConflictError, NotFoundError, UnauthorizedError } from "../../utils/AppError.js";
 import {
   comparePassword,
   generateTokenPair,
@@ -68,6 +68,12 @@ export const loginUser = async (
   return { ...mapUser(user), ...tokens };
 };
 
-export const getUserProfile = () => {
-  
+export const getUserProfile = async (id: number) => {
+  const user = await authRepository.findUserById(id);
+
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  return mapUser(user);
 }

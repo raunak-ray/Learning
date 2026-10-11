@@ -46,10 +46,8 @@ export function errorMiddleware(
 
   console.error(`[ERROR] ${method} ${path}`, error);
 
-  return errorResponse(
-    res,
-    "Internal Server Error",
-    500,
-    "INTERNAL_SERVER_ERROR",
-  );
+  const message =
+    error instanceof Error ? error.message : "Internal Server Error";
+
+  return errorResponse(res, message, 500, "INTERNAL_SERVER_ERROR");
 }
