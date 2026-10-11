@@ -3,6 +3,8 @@ import { AppError } from "../utils/AppError.js";
 import { errorResponse } from "../utils/responseHelpers.js";
 import { unwrapPgError, mapPgError } from "../utils/dbError.js";
 
+const timestamp = () => new Date().toISOString();
+
 export function errorMiddleware(
   error: unknown,
   req: Request,
@@ -18,7 +20,9 @@ export function errorMiddleware(
         error.errors.map((e) => `\n ${e.field}: ${e.message}`).join(", ")
       : "";
 
-    console.log(`[ERROR] ${method} ${path} | ${error.message}${fields}\n`);
+    console.log(
+      `[${timestamp()}] [ERROR] ${method} ${path} ${error.statusCode} - ${error.message}${fields}`,
+    );
 
     return errorResponse(
       res,
@@ -32,22 +36,29 @@ export function errorMiddleware(
   const pgError = unwrapPgError(error);
 
   if (pgError) {
-    console.error(`\n[DB ERROR] ${method} ${path}\n`, {
-      code: pgError.code,
-      table: pgError.table,
-      column: pgError.column,
-      constraint: pgError.constraint,
-      message: pgError.message,
-    });
+    const details = [
+      pgError.code ? `code=${pgError.code}` : null,
+      pgError.table ? `table=${pgError.table}` : null,
+      pgError.column ? `column=${pgError.column}` : null,
+      pgError.constraint ? `constraint=${pgError.constraint}` : null,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    console.error(
+      `[${timestamp()}] [DB ERROR] ${method} ${path} 500 - ${pgError.message}${details ? ` | ${details}` : ""}`,
+    );
 
     const mapped = mapPgError(pgError);
     return errorResponse(res, mapped.message, mapped.statusCode, mapped.code);
   }
 
-  console.error(`[ERROR] ${method} ${path}`, error);
-
   const message =
     error instanceof Error ? error.message : "Internal Server Error";
+
+  console.error(
+    `[${timestamp()}] [ERROR] ${method} ${path} 500 - ${message}`,
+  );
 
   return errorResponse(res, message, 500, "INTERNAL_SERVER_ERROR");
 }

@@ -1,10 +1,18 @@
-import { ConflictError, NotFoundError, UnauthorizedError } from "../../utils/AppError.js";
+import {
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../../utils/AppError.js";
 import {
   comparePassword,
   generateTokenPair,
   hashPassword,
 } from "./auth.helpers.js";
-import type { LoginUserType, RegisterUserType } from "./auth.schema.js";
+import type {
+  LoginUserType,
+  RegisterUserType,
+  UpdateUserType,
+} from "./auth.schema.js";
 import * as authRepository from "./auth.repository.js";
 import { User } from "../../db/schema/index.js";
 import type { SafeUser, UserResponse } from "./auth.types.js";
@@ -68,7 +76,7 @@ export const loginUser = async (
   return { ...mapUser(user), ...tokens };
 };
 
-export const getUserProfile = async (id: number) => {
+export const getUserProfile = async (id: number): Promise<SafeUser> => {
   const user = await authRepository.findUserById(id);
 
   if (!user) {
@@ -76,4 +84,17 @@ export const getUserProfile = async (id: number) => {
   }
 
   return mapUser(user);
-}
+};
+
+export const updateUserProfile = async (
+  id: number,
+  input: UpdateUserType,
+): Promise<SafeUser> => {
+  const updatedUser = await authRepository.updateUser(id, input);
+
+  if (!updatedUser) {
+    throw new ConflictError("Failed to update user profile");
+  }
+
+  return mapUser(updatedUser);
+};

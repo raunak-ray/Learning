@@ -20,4 +20,11 @@ router.post(
 
 router.get("/me", authMiddleware, authController.getMe);
 
+router.patch(
+  "/update",
+  validate(authSchema.UpdateUserSchema),
+  authMiddleware,
+  authController.updateProfile,
+);
+
 export default router;

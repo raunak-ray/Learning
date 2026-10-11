@@ -6,7 +6,7 @@ import { BadRequestError } from "../utils/AppError.js";
 export type Source = "body" | "params" | "query";
 
 export const validate =
-  (schema: z.ZodType, source: Source) =>
+  (schema: z.ZodType, source: Source = "body") =>
   (req: Request, _: Response, next: NextFunction) => {
     const result = schema.safeParse(req[source]);
 

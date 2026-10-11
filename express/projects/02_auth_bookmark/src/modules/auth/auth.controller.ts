@@ -2,9 +2,10 @@ import type { Request, Response } from "express";
 import { successResponse } from "../../utils/responseHelpers.js";
 import * as authService from "./auth.service.js";
 import { UnauthorizedError } from "../../utils/AppError.js";
+import type { LoginUserType, RegisterUserType, UpdateUserType } from "./auth.schema.js";
 
 export const register = async (req: Request, res: Response) => {
-  const body = req.body;
+  const body: RegisterUserType = req.body;
 
   const data = await authService.registerUser(body);
 
@@ -12,7 +13,7 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const body = req.body;
+  const body: LoginUserType = req.body;
 
   const data = await authService.loginUser(body);
 
@@ -30,3 +31,17 @@ export const getMe = async (req: Request, res: Response) => {
 
   return successResponse(res, "Profile fetched successfully", 200, data);
 };
+
+export const updateProfile = async (req: Request, res: Response) => {
+  const user = req.user;
+
+  if (!user) {
+    throw new UnauthorizedError("Authentication required");
+  }
+
+  const body: UpdateUserType = req.body;
+
+  const data = await authService.updateUserProfile(user.sub, body);
+
+  return successResponse(res, "Profile updated successfully", 200, data);
+}
