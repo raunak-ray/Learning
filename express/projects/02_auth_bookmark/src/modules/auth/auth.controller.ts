@@ -9,3 +9,11 @@ export const register = async (req: Request, res: Response) => {
 
   return successResponse(res, "User registered successfully", 201, data);
 };
+
+export const login = async (req: Request, res: Response) => {
+  const body = req.body;
+
+  const data = await authService.loginUser(body);
+
+  return successResponse(res, "User logged in successfully", 200, data);
+};

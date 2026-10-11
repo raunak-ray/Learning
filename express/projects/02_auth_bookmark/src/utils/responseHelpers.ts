@@ -5,7 +5,7 @@ export function successResponse<T = null>(
   res: Response,
   message: string = "Success",
   statusCode: number = 200,
-  data: T = null as T,
+  data: T,
 ): Response {
   return res.status(statusCode).json({
     success: true,

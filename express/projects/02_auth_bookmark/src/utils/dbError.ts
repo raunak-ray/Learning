@@ -20,7 +20,7 @@ const PG_ERROR_CODE = {
 } as const;
 
 const UNIQUE_FIELD_MESSAGE: Record<string, string> = {
-  tbl_users_email_unique: "This email is already registered.",
+  tbl_users_email_unique: "An account with this email already exists.",
 };
 
 export type PgErrorMap = {

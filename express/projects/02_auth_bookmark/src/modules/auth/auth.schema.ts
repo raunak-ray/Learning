@@ -31,4 +31,11 @@ export const RegisterUserSchema = z.object({
     ),
 });
 
+export const LoginUserSchema = z.object({
+  email: z.email("Email must be a valid email address"),
+
+  password: z.string().min(1, "Password must be at least 1 characters long"),
+});
+
 export type RegisterUserType = z.infer<typeof RegisterUserSchema>;
+export type LoginUserType = z.infer<typeof LoginUserSchema>;
