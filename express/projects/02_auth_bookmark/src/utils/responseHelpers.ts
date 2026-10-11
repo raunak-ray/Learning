@@ -18,11 +18,13 @@ export function errorResponse(
   res: Response,
   message: string = "Something went wrong",
   statusCode: number = 500,
+  code?: string,
   fields?: Fields[],
 ): Response {
   return res.status(statusCode).json({
     success: false,
     message: message,
+    code,
     fields,
   });
 }

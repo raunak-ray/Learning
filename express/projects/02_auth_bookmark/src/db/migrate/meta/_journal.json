@@ -15,6 +15,13 @@
       "when": 1791652458041,
       "tag": "02_update_user_table",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791698759018,
+      "tag": "03_add_unique_constaraint_to_email_user",
+      "breakpoints": true
     }
   ]
 }
