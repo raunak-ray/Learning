@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 function Button({ title, onClick, variant = "secondary" }) {
   const baseStyle =
     "flex-1 rounded-lg border px-2 py-3 text-xs font-semibold transition-all duration-200 active:scale-[0.97] sm:text-sm";
@@ -9,6 +11,14 @@ function Button({ title, onClick, variant = "secondary" }) {
     secondary:
       "border-(--border) bg-(--surface-raised) text-(--text-primary) hover:border-slate-500 hover:bg-[#303B58]",
   };
+
+  useEffect(() => {
+    console.log("Button component mount");
+
+    return (() => {
+      console.log("Button compoennt unmount")
+    })
+  }, []);
 
   return (
     <button

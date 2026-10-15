@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./Button";
 
 function Counter() {
@@ -15,6 +15,26 @@ function Counter() {
   const handleReset = () => {
     setCount(0);
   };
+
+  // useEffect(() => {
+  //   console.log("The count is: ", count);
+  // }, [count]);
+
+  useEffect(() => {
+    console.log("Component mounted.");
+
+    return () => {
+      console.log("Component unmounted");
+    };
+  }, []);
+
+//   useEffect(() => {
+//     console.log("Effect ran after every render");
+// 
+//     return (() => {
+//       console.log("Effect ran in cleanup")
+//     })
+//   });
 
   return (
     <section className="mt-5 rounded-2xl border border-(--border) bg-(--surface) p-5 shadow-2xl shadow-black/20 sm:p-7">
@@ -40,21 +60,11 @@ function Counter() {
 
       {/* Actions */}
       <div className="grid grid-cols-3 gap-2">
-        <Button
-          title="Increment"
-          onClick={handleIncrement}
-          variant="primary"
-        />
+        <Button title="Increment" onClick={handleIncrement} variant="primary" />
 
-        <Button
-          title="Reset"
-          onClick={handleReset}
-        />
+        <Button title="Reset" onClick={handleReset} />
 
-        <Button
-          title="Decrement"
-          onClick={handleDecrement}
-        />
+        <Button title="Decrement" onClick={handleDecrement} />
       </div>
     </section>
   );
