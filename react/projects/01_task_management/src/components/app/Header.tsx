@@ -1,24 +1,19 @@
-import { Button } from "@base-ui/react";
-import { Plus } from "lucide-react";
+import ButtonView from "../shared/ButtonView";
+import TextView from "../shared/TextView";
 
 interface HeaderProps {}
 
 function Header({}: HeaderProps) {
   return (
-    <section className="mt-5 flex justify-between items-center">
+    <section className="mt-5 flex items-center justify-between">
       <div className="flex flex-col gap-1">
-        <h1 className="text-foreground font-sans tracking-wide text-lg md:text-2xl font-bold">
-          Your tasks, in focus.
-        </h1>
-        <p className="text-muted-foreground text-xs md:text-md">
+        <TextView variant="h1">Your tasks, in focus.</TextView>
+        <TextView variant="caption" tone="muted">
           A little clarity. A little progress. All in one place.
-        </p>
+        </TextView>
       </div>
 
-      <Button className="inline-flex gap-1 bg-primary text-muted px-4 py-2 rounded-lg items-center justify-center text-sm font-normal">
-        <Plus className="w-4 h-4" />
-        New Task
-      </Button>
+      <ButtonView leftIcon="Plus">New Task</ButtonView>
     </section>
   );
 }
