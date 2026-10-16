@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import { Fields } from "./types";
+import type { Fields } from "./types";
 
 type SuccessProps<T> = {
 	message?: string;
