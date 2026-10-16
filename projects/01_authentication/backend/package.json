@@ -1,21 +1,26 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/server.ts",
-  "scripts": {
-    "dev": "tsx --watch src/server.ts",
-    "start": "tsx dist/server.js",
-    "build": "tsc"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^26.6.5",
-    "dotenv": "^18.0.8",
-    "express": "^5.3.0",
-    "tsx": "^4.23.15"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "src/server.ts",
+	"scripts": {
+		"dev": "tsx --watch src/server.ts",
+		"start": "tsx dist/server.js",
+		"build": "tsc",
+		"format": "npx biome check --write",
+		"lint": "npx biome check"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"dotenv": "^18.0.8",
+		"express": "^5.3.0",
+		"tsx": "^4.23.15"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.15",
+		"@types/express": "^5.0.6",
+		"@types/node": "^26.6.5"
+	}
 }
