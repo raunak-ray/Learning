@@ -15,6 +15,20 @@
       "when": 1792494212914,
       "tag": "0001_messy_wiccan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792509702100,
+      "tag": "0002_heavy_maginty",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792511070743,
+      "tag": "0003_regular_jane_foster",
+      "breakpoints": true
     }
   ]
 }

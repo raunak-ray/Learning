@@ -10,7 +10,7 @@ export const User = pgTable("tbl_users", {
   last_name: varchar({ length: 100 }).notNull(),
   email: varchar({ length: 255 }).unique().notNull(),
   password: varchar({ length: 255 }).notNull(),
-  status: UserStatusEnum().default("unverified"),
+  status: UserStatusEnum().default("unverified").notNull(),
   created_at: timestamp({ withTimezone: true }).defaultNow(),
   updated_at: timestamp({ withTimezone: true }),
 });

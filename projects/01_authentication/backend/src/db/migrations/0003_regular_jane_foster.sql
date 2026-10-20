@@ -1,0 +1,1 @@
+ALTER TABLE "tbl_user_otp" ADD COLUMN "is_consumed" boolean DEFAULT false NOT NULL;

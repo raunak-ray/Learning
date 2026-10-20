@@ -45,4 +45,22 @@ export class AuthController {
       data,
     });
   };
+
+  public verify = async (req: Request, res: Response) => {
+    const id = req.user?.sub;
+
+    if (id === undefined) {
+      throw new UnauthorizedError("Authentication required for fetching profile data");
+    }
+
+    const input = req.body;
+
+    const data = await this.authService.verifyEmail(id, input);
+
+    return successResponse(res, {
+      message: "User email verified successfully",
+      statusCode: 200,
+      data,
+    });
+  }
 }
