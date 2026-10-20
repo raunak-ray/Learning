@@ -1,64 +1,101 @@
 import bcrypt from "bcryptjs";
 import jwt, { type SignOptions } from "jsonwebtoken";
-import { AppError } from "@/utils/AppError";
+import { AppError, UnauthorizedError } from "@/utils/AppError";
 import "dotenv/config";
 
 export const hashPassword = async (password: string) => {
-	const SALT_ROUNDS = 10;
-	return await bcrypt.hash(password, SALT_ROUNDS);
+  const SALT_ROUNDS = 10;
+  return await bcrypt.hash(password, SALT_ROUNDS);
 };
 
 export const verifyHashPassword = async (
-	password: string,
-	hashPassword: string,
+  password: string,
+  hashPassword: string,
 ) => {
-	return await bcrypt.compare(password, hashPassword);
+  return await bcrypt.compare(password, hashPassword);
 };
 
 export type JWTPayload = {
-	sub: number;
-	email: string;
-	jti: string;
+  sub: number;
+  email: string;
+  jti: string;
 };
 
 export const generateToken = (
-	payload: JWTPayload,
-	type: "access" | "refresh" = "access",
+  payload: JWTPayload,
+  type: "access" | "refresh" = "access",
 ) => {
-	switch (type) {
-		case "access": {
-			const accessSecret = process.env.JWT_ACCESS_SECRET;
-			const accessExpiry = process.env
-				.JWT_ACCESS_EXPIRY as SignOptions["expiresIn"];
+  switch (type) {
+    case "access": {
+      const accessSecret = process.env.JWT_ACCESS_SECRET;
+      const accessExpiry = process.env
+        .JWT_ACCESS_EXPIRY as SignOptions["expiresIn"];
 
-			if (!accessSecret || !accessExpiry) {
-				throw new AppError("Access secret or expiry is missing");
-			}
+      if (!accessSecret || !accessExpiry) {
+        throw new AppError("Access secret key or expiry is missing");
+      }
 
-			return jwt.sign(payload, accessSecret, { expiresIn: accessExpiry });
-		}
+      return jwt.sign(payload, accessSecret, { expiresIn: accessExpiry });
+    }
 
-		case "refresh": {
-			const refreshSecret = process.env.JWT_REFRESH_SECRET;
-			const refreshExpiry = process.env
-				.JWT_REFRESH_EXPIRY as SignOptions["expiresIn"];
+    case "refresh": {
+      const refreshSecret = process.env.JWT_REFRESH_SECRET;
+      const refreshExpiry = process.env
+        .JWT_REFRESH_EXPIRY as SignOptions["expiresIn"];
 
-			if (!refreshSecret || !refreshExpiry) {
-				throw new AppError("Refresh secret key or expiry is missing");
-			}
+      if (!refreshSecret || !refreshExpiry) {
+        throw new AppError("Refresh secret key or expiry is missing");
+      }
 
-			return jwt.sign(payload, refreshSecret, { expiresIn: refreshExpiry });
-		}
-	}
+      return jwt.sign(payload, refreshSecret, { expiresIn: refreshExpiry });
+    }
+  }
 };
 
 export const generateTokenPairs = (payload: JWTPayload) => {
-	const accessToken = generateToken(payload, "access");
-	const refreshToken = generateToken(payload, "refresh");
+  const accessToken = generateToken(payload, "access");
+  const refreshToken = generateToken(payload, "refresh");
 
-	return { accessToken, refreshToken };
+  return { accessToken, refreshToken };
+};
+
+export const verifyToken = (
+  token: string,
+  type: "access" | "refresh" = "access",
+): JWTPayload => {
+  const secret =
+    type === "refresh"
+      ? process.env.JWT_REFRESH_SECRET
+      : process.env.JWT_ACCESS_SECRET;
+
+  if (!secret) {
+    throw new AppError("JWT secret is missing");
+  }
+
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, secret);
+  } catch (error) {
+    throw new UnauthorizedError("Invalid or expired token");
+  }
+
+  if (
+    typeof decoded === "string" ||
+    typeof decoded.sub !== "number" ||
+    typeof decoded.email !== "string" ||
+    typeof decoded.jti !== "string"
+  ) {
+    throw new AppError("Invalid token payload");
+  }
+
+  return {
+    sub: decoded.sub,
+    email: decoded.email,
+    jti: decoded.jti,
+  };
 };
 
 export const generateUUID = () => {
-	return crypto.randomUUID();
+  return crypto.randomUUID();
 };

@@ -1,4 +1,4 @@
-import { ConflictError, UnauthorizedError } from "@/utils/AppError";
+import { ConflictError, NotFoundError, UnauthorizedError } from "@/utils/AppError";
 import {
 	generateTokenPairs,
 	generateUUID,
@@ -55,7 +55,6 @@ export class AuthService {
 		}
 
 		const jti = generateUUID();
-		console.log(jti);
 
 		const tokens = generateTokenPairs({
 			sub: user.id,
@@ -64,5 +63,15 @@ export class AuthService {
 		});
 
 		return { ...user, password: undefined, ...tokens };
-	}
+  }
+
+  public async getProfile(id: number) {
+    const user = await this.authRepository.findById(id);
+
+    if (!user) {
+      throw new NotFoundError("User profile not found");
+    }
+
+    return user;
+  }
 }
