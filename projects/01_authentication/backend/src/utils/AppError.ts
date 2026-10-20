@@ -55,3 +55,12 @@ export class NotFoundError extends AppError {
 		});
 	}
 }
+
+export class ConflictError extends AppError {
+	constructor(message: string = "Resource already exists") {
+		super(message, {
+			statusCode: 409,
+			code: "CONFLICT",
+		});
+	}
+}

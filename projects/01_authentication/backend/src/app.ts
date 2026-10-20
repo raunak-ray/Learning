@@ -1,6 +1,7 @@
 import express from "express";
 import "dotenv/config";
 import { pinoHttp } from "pino-http";
+import authRoutes from "@/modules/auth/auth.routes";
 import { errorMiddleware, notFoundMiddleware } from "./middleware/index";
 import { logger } from "./utils/logger";
 
@@ -29,6 +30,8 @@ app.use(
 
 // parse json object
 app.use(express.json());
+
+app.use("/auth", authRoutes);
 
 // route not found middleware
 app.use(notFoundMiddleware);
